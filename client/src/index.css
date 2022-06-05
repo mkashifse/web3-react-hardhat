@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+button {
+  @apply border shadow shadow-blue-400 rounded-full px-4 p-1 text-sm;
+}

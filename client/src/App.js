@@ -27,14 +27,15 @@ let contract, defaultAccount, web3;
 const getMethod = (name, params = null) => {
   return new Promise((resolve, reject) => {
     if (params) {
+      contract.methods[name](params).send({ from: defaultAccount }, (err, resp) => {
+        if (err) reject(err);
+        else resolve(resp);
+      });
     } else {
-      contract.methods[name]().call(
-        { from: defaultAccount },
-        (err, resp) => {
-          if (err) reject(err);
-          else resolve(resp);
-        }
-      );
+      contract.methods[name]().call({ from: defaultAccount }, (err, resp) => {
+        if (err) reject(err);
+        else resolve(resp);
+      });
     }
   });
 };
@@ -48,14 +49,20 @@ function App() {
     });
   }, []);
 
-  const onClick = async () => {
+  const onGreet = async () => {
     const resp = await getMethod("greet");
+    console.log(resp);
+  };
+
+  const setGreetings = async () => {
+    const resp = await getMethod("setGreeting", "Hi, new greetigs..!!");
     console.log(resp);
   };
 
   return (
     <h1 className="text-3xl font-bold underline">
-      <button onClick={onClick}>Greet</button>
+      <button onClick={onGreet} >Greet</button>
+      <button onClick={setGreetings} > Set Greet</button>
     </h1>
   );
 }
