@@ -1,55 +1,14 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import Web3 from "web3";
-import contractAbi from "./hardhat/artifacts/contracts/Greeter.sol/Greeter.json";
 import avatar from "animal-avatar-generator";
 import { FaEthereum } from "react-icons/fa";
+import {
+  ContractForm,
+  web3Init,
+  getMethod,
+  contractAbi,
+} from "./components";
 
-const web3Init = async (onConnect) => {
-  let defaultAccount = "";
-  const web3 = new Web3(
-    new Web3.providers.WebsocketProvider("ws://127.0.0.1:8545/")
-  );
-  const connector = window.ethereum;
-  const contract = new web3.eth.Contract(
-    contractAbi.abi,
-    "0x5fbdb2315678afecb367f032d93f642f64180aa3"
-  );
-
-  const accounts = await web3.eth.getAccounts();
-  connector
-    .request({
-      method: "eth_requestAccounts",
-    })
-    .then(([account]) => {
-      defaultAccount = account;
-      onConnect({ defaultAccount, contract, web3, accounts });
-    });
-};
-
-let contract,
-  defaultAccount,
-  web3 = new Web3(""),
-  accounts;
-
-const getMethod = (name, params = null) => {
-  return new Promise((resolve, reject) => {
-    if (params) {
-      contract.methods[name](params).send(
-        { from: defaultAccount },
-        (err, resp) => {
-          if (err) reject(err);
-          else resolve(resp);
-        }
-      );
-    } else {
-      contract.methods[name]().call({ from: defaultAccount }, (err, resp) => {
-        if (err) reject(err);
-        else resolve(resp);
-      });
-    }
-  });
-};
 
 function App() {
   const [avt, setAvatar] = useState("");
@@ -59,11 +18,9 @@ function App() {
 
   useEffect(() => {
     web3Init((obj) => {
-      contract = obj.contract;
-      defaultAccount = obj.defaultAccount;
       web3 = obj.web3;
       setAccounts(obj.accounts);
-      const av = avatar(defaultAccount, { size: 32, round: false });
+      const av = avatar(obj.defaultAccount, { size: 32, round: false });
       setAvatar(av + "");
 
       web3.eth.subscribe("pendingTransactions", (err, resp) => {
@@ -124,6 +81,10 @@ function App() {
       </div>
 
       {/* BODY */}
+
+      <div>
+        <ContractForm abi={contractAbi.abi} />
+      </div>
 
       <button
         onClick={onGreet}
