@@ -2,13 +2,8 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import avatar from "animal-avatar-generator";
 import { FaEthereum } from "react-icons/fa";
-import {
-  ContractForm,
-  web3Init,
-  getMethod,
-  contractAbi,
-} from "./components";
-
+import { web3Init, getMethod, contractAbi } from "./components";
+import { ContractForm } from "./ContractForm";
 
 function App() {
   const [avt, setAvatar] = useState("");
@@ -18,7 +13,7 @@ function App() {
 
   useEffect(() => {
     web3Init((obj) => {
-      web3 = obj.web3;
+      let web3 = obj.web3;
       setAccounts(obj.accounts);
       const av = avatar(obj.defaultAccount, { size: 32, round: false });
       setAvatar(av + "");
@@ -40,6 +35,7 @@ function App() {
   };
 
   const reloadBalance = (value = null) => {
+    let { web3 } = window.web3Obj;
     web3.eth.getBalance(value).then((resp) => {
       setBalance(web3.utils.fromWei(resp));
     });

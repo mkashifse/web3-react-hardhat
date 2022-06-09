@@ -1,8 +1,7 @@
 import Web3 from "web3";
 import contractAbi from "./hardhat/artifacts/contracts/Greeter.sol/Greeter.json";
 
-let contract,
-  web3 = new Web3("");
+let contract;
 
 const web3Init = async (onConnect) => {
   let defaultAccount = "";
@@ -12,7 +11,7 @@ const web3Init = async (onConnect) => {
   const connector = window.ethereum;
   const contract = new web3.eth.Contract(
     contractAbi.abi,
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    "0x5fbdb2315678afecb367f032d93f642f64180aa3"
   );
 
   console.log(contractAbi.abi);
@@ -29,7 +28,7 @@ const web3Init = async (onConnect) => {
     });
 };
 
-const getMethod = (name, params = null) => {
+const getMethod = (contract, name, params = null) => {
   return new Promise((resolve, reject) => {
     if (params) {
       contract.methods[name](params).send(
@@ -40,60 +39,15 @@ const getMethod = (name, params = null) => {
         }
       );
     } else {
-      contract.methods[name]().call({ from:  window.web3Obj.defaultAccount }, (err, resp) => {
-        if (err) reject(err);
-        else resolve(resp);
-      });
+      contract.methods[name]().call(
+        { from: window.web3Obj.defaultAccount },
+        (err, resp) => {
+          if (err) reject(err);
+          else resolve(resp);
+        }
+      );
     }
   });
 };
 
-const CButton = (props) => {
-  const { text, ...other } = props;
-  return (
-    <button className="rounded px-3 p-1 h-full bg-indigo-400 w-full text-white text-sm shadow shadow-indigo-300">
-      {props.children}
-    </button>
-  );
-};
-
-const CText = (props) => {
-  return (
-    <input
-      {...props}
-      className="text-sm p-2 px-4 rounded border w-full"
-    ></input>
-  );
-};
-
-const ContractForm = ({ abi }) => {
-  return (
-    <div>
-      <div className="max-w-lg m-auto divide-y">
-        {abi.map((item, i) => {
-          if (item.name) {
-            return (
-              <div className="flex py-2 gap-2" key={i}>
-                <div className="w-1/3">
-                  <CButton>{item.name}</CButton>
-                </div>
-                <div className="w-2/3">
-                  <CText></CText>
-                </div>
-              </div>
-            );
-          }
-        })}
-      </div>
-    </div>
-  );
-};
-
-export {
-  contractAbi,
-  web3Init,
-  getMethod,
-  CText,
-  CButton,
-  ContractForm,
-};
+export { contractAbi, web3Init, getMethod };

@@ -15,6 +15,10 @@ contract Greeter {
         return greeting;
     }
 
+    function messageMe() public pure returns (string memory) {
+        return "Hey this is message";
+    }
+
     function setGreeting(string memory _greeting) public {
         console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
         greeting = _greeting;
